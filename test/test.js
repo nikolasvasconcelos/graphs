@@ -1,12 +1,11 @@
 const assert = require('assert')
-const mocha = require('mocha')
 const Graph = require('../src/Graph')
 
 let g = new Graph()
 
 describe('Graphs implementation', () => {
-  
-  mocha.before(() => {
+
+  before(() => {
     // 1 semester
     g.addVertex('EEL5105')
     g.addVertex('INE5401')
