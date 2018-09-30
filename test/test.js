@@ -121,18 +121,9 @@ describe('Graphs implementation', () => {
     assert.equal(g.getAllVertices()[10], 'MTM7174')
     assert.equal(g.getAllVertices()[20], 'INE5416')
   })
-
-  it('Deletes nodes', () => {
-    
-  })
-
   it('Has connected and found adjacents', () => {
     assert.equal(g.getAdjacents('EEL5105').length, 1)
     assert.equal(g.getAdjacents('INE5403').length, 3)
-  })
-
-  it('Disconnects nodes', () => {
-    
   })
 
   it('Graph order is  39', () => {
@@ -159,13 +150,15 @@ describe('Graphs implementation', () => {
     assert.equal(g.isConnected(), false)
   })
 
-  it('Is a tree', () => {
-    assert.equal(g.isTree(), true)
+  it('Deletes nodes', () => {
+    g.rmVertex('EEL5105')
+    assert.equal(g.getAllVertices().indexOf('EEL5105'), -1)
   })
 
-  // it('Remove a node', () => {
-  //   g.rmVertex('POO1')
-  //   assert.equal(g.getVertex(),[])
-  // })
+
+  it('Disconnects nodes', () => {
+    g.disc('INE5406','INE54011')
+    assert.equal(g.getAdjacents('INE5406').indexOf('INE54011'), -1)
+  })
 
 })

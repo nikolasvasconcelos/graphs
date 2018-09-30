@@ -95,29 +95,7 @@ module.exports = class Graph {
         this.getVertex()
       )
       .indexOf(item) < 0
-    );
-		return missing.length === 0;
+    )
+		return missing.length === 0
   }
-
-  isTree () {
-		return !this.hasCycleWith(this.getVertex(), this.getVertex(), [])
-  }
-  
-  hasCycleWith(current, previous, alreadyVisited) {
-    if (alreadyVisited.indexOf(current) >= 0) return true
-
-    alreadyVisited.push(current);
-
-		for (const adj of this.getAdjacents(current)) {
-			if (adj != previous) {
-				if (this.hasCycleWith(adj, current, alreadyVisited)) {
-					return true
-				}
-			}
-		}
-		const index = alreadyVisited.indexOf(current);
-		alreadyVisited.splice(index, 1);
-
-		return false;
-	}
 }
