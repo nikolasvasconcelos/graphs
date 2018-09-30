@@ -126,7 +126,7 @@ describe('Graphs implementation', () => {
     assert.equal(g.getAdjacents('INE5403').length, 3)
   })
 
-  it('Graph order is  39', () => {
+  it('has order of  39', () => {
     assert.equal(g.getGraphOrder(), 39)
   })
 
