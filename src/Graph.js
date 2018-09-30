@@ -8,36 +8,28 @@ module.exports = class Graph {
   }
 
   rmVertex (v) {
-    const vList = this.graph.get(v);
-		if (vList === undefined) return
+    const vList = this.graph.get(v)
+    
+    if (!vList) return
     
     for (const entry of vList) {
-      this.disc(v, entry);
+      this.disc(v, entry)
     }
-		this.graph.delete(v);
+		this.graph.delete(v)
   }
 
   conn (v1, v2) {
-    const v1List = this.graph.get(v1);
-		const v2List = this.graph.get(v2);
-    
-    if (v1List === undefined || v2List === undefined) return
-    
-    v1List.push(v2);
-    v2List.push(v1);
+    const v1List = this.graph.get(v1)
+    if (v1List) v1List.push(v2)
   }
 
   disc (v1, v2) {
-    const v1List = this.adjacencyList.get(v1);
-		const v2List = this.adjacencyList.get(v2);
+    const v1List = this.graph.get(v1)
     
-    if (v1List === undefined || v2List === undefined) return
+    if (!v1List) return
     
-    const v1index = v1List.indexOf(v2);
-    const v2index = v2List.indexOf(v1);
-    
-    v1index > -1 && v1List.splice(v1index, 1);
-    v2index > -1 && v2List.splice(v2index, 1);
+    const v1index = v1List.indexOf(v2)
+    v1index > -1 && v1List.splice(v1index, 1)
   }
 
   getGraphOrder () {
@@ -45,10 +37,10 @@ module.exports = class Graph {
   }
 
   getVertex () {
-		return this.getAllVerteces().length > 0 && this.getAllVerteces()[Math.floor(Math.random() * this.graph.size)]
+		return this.getAllVertices().length > 0 && this.getAllVertices()[Math.floor(Math.random() * this.graph.size)]
   }
   
-  getAllVerteces () {
+  getAllVertices () {
     return [...this.graph.keys()]
   }
 
@@ -56,50 +48,76 @@ module.exports = class Graph {
     return this.graph.get(v) || undefined
   }
 
-  getGraphDegree (v) {
-    return this.getAdjacents(v).length;
+  getDegree (v) {
+    return this.getAdjacents(v).length
   }
 
   isRegular () {
-    const degree = this.getGraphDegree(this.getVertex());
-		for(const v of this.getAllVerteces()) {
+    const degree = this.getDegree(this.getVertex())
+		for(const v of this.getAllVertices()) {
 			if(this.getDegree(v) !== degree) {
-				return false;
+				return false
 			}
 		}
-		return true;
+		return true
   }
 
   isComplete () {
-    const n = this.order() - 1;
-		for (const vertex of this.getVertices()) {
+    const n = this.getGraphOrder() - 1
+		for (const vertex of this.getAllVertices()) {
 			if (this.getDegree(vertex) !== n) {
-				return false;
+				return false
 			}
 		}
-		return true;
+		return true
   }
 
-  getTransitiveClosure (v) {
-    if(v === undefined) return
+  getTransitiveClosure (vert, visited) {
+    if (!vert) return
     
-    let visited = []
-		visited.push(v);
+    if (!visited) visited = []
+
+    visited.push(vert)
     
-    for (const v of this.getAdjacentVertices(v)) {
-			if (!visited.includes(v)) {
-				this.findTransitiveClosure(v, visited);
+    for (const v of this.getAdjacents(vert)) {
+			if (visited.indexOf(v) === -1) {
+				this.getTransitiveClosure(v, visited)
 			}
 		}
-    
-    return visited;
+
+    return visited
   }
 
   isConnected () {
-		return this.compareSets(this.getAllVerteces(), this.transitiveClosure(this.getVertex()));
+    const graph = this.getAllVertices()
+    const missing = graph.filter(
+      item => this.getTransitiveClosure(
+        this.getVertex()
+      )
+      .indexOf(item) < 0
+    );
+		return missing.length === 0;
   }
 
   isTree () {
-		return this.isConnected() && !this.hasCycleWith(this.getVertex(), this.getVertex(), []);
+		return !this.hasCycleWith(this.getVertex(), this.getVertex(), [])
+  }
+  
+  hasCycleWith(current, previous, alreadyVisited) {
+    if (alreadyVisited.indexOf(current) >= 0) return true
+
+    alreadyVisited.push(current);
+
+		for (const adj of this.getAdjacents(current)) {
+			if (adj != previous) {
+				if (this.hasCycleWith(adj, current, alreadyVisited)) {
+					return true
+				}
+			}
+		}
+		const index = alreadyVisited.indexOf(current);
+		alreadyVisited.splice(index, 1);
+
+		return false;
 	}
 }
